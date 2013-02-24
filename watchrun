@@ -2,9 +2,22 @@
 color=1
 
 run_command() {
+    cur=""
+    for item in $@; do
+	if [ "$item" = "-" ]; then
+	    print_bar
+	    echo "$(tput setaf $color)$cur$(tput sgr0)"
+	    print_bar
+	    $cur
+	    cur=""
+	else
+	    cur="$cur $item"
+	fi
+    done
     print_bar
-    $@
+    echo "$(tput setaf $color)$cur$(tput sgr0)"
     print_bar
+    $cur
 }
 
 print_bar() {
@@ -17,11 +30,17 @@ print_bar() {
 }
 
 if [ "$#" -lt 2 ]; then
-    echo "USAGE: watchrun [directory] [command]"
+    echo "USAGE: watchrun [directory] - [command1] - [command2] ..."
     exit 1
 fi
 
 directory="$1"
+shift
+if [ ! "$1" = "-" ]; then
+    echo "USAGE: watchrun [directory] - [command1] - [command2] ..."
+    exit 1
+fi
+
 shift
 commmand="$@"
 
@@ -29,11 +48,9 @@ run_command $commmand
 change=""
 while :; do
     # Wait for something to change.
-    echo "$(tput setaf $color)Watching...$(tput sgr0)"
-    change=$("inotifywait --event close_write,moved_to,create --recursive --quiet --exclude \
-        '(.*\.hg.*|.*\.git.*|.*\.svn.*|\.#.*|#.*#)' $directory")
+    print_bar
+    echo -n "$(tput setaf $color)Waiting for event: $(tput sgr0)"
+    change=$(inotifywait --event close_write,moved_to,create --recursive --quiet --exclude '(.*\.hg.*|.*\.git.*|.*\.svn.*|\.#.*|#.*#)' $directory)
     echo "$(tput setaf $color)$change$(tput sgr0)"
-    echo "$(tput setaf $color)Triggered. Running command.$(tput sgr0)"
     run_command $commmand
-    echo "$(tput setaf $color)Done.$(tput sgr0)"
 done
