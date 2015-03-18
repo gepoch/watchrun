@@ -24,5 +24,5 @@ $ watchrun ~/Documents - pb -a "Quit putting stuff in Documents! You're just gon
 Have a REALLY granular git history with detailed commit messages! (PROBABLY DON'T ACTUALLY DO THIS! YOUR COWORKERS ARE HASSLED ENOUGH!)
 
 ```
-$ watchrun . - git commit -m "Some fixes." - git push --all
+$ watchrun . - git add --all - git commit -m "Some fixes." - git push --all
 ```
