@@ -4,6 +4,11 @@ A simple bash event loop for triggering anything after saves.
 
 Just give it a path to watch followed by a hyphen, followed by a hyphen-delimited list of commands to run. It'll run them sequentially, and then set up to detect new changes in the path. Loops until you kill it.
 
+Obligatory sketchy one-liner installation. Give me your sudos.
+```
+curl -s https://raw.githubusercontent.com/gepoch/watchrun/master/watchrun | sudo tee /usr/local/bin/watchrun >/dev/null && sudo chmod +x /usr/local/bin/watchrun
+```
+
 ## Examples!
 
 Make your source code with every tweak!
